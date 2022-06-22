@@ -42,11 +42,12 @@ public class MyInjector {
             System.out.println(map.getValue());
         }
         MyInjector my  = new MyInjector();
+        CClass c = new CClass();
 
-        my.getBean(new AClass());
+        my.getBean(c);
     }
 
-    public Object getBean(AClass clazz) throws BeanNotFoundException {
+    public Object getBean(CClass clazz) throws BeanNotFoundException {
 
         if(container.containsKey(clazz)){
             return container.get(clazz);
