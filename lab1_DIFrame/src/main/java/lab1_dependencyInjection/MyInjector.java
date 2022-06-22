@@ -9,20 +9,21 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class MyInjector {
+
     static Map<Class, Object> container = new HashMap<>();
 
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws InstantiationException, IllegalAccessException, BeanNotFoundException {
 
-        Reflections reflections = new Reflections("cs545", new SubTypesScanner(), new TypeAnnotationsScanner(), new FieldAnnotationsScanner());
+        Reflections reflections = new Reflections("lab1_dependencyInjection", new SubTypesScanner(), new TypeAnnotationsScanner(), new FieldAnnotationsScanner());
 
         Set<Class<?>> annotatedClasses = reflections.getTypesAnnotatedWith(MyBean.class);
         Set<Field> fields = reflections.getFieldsAnnotatedWith(MyAutowired.class);
 
         for (Class<?> claz : annotatedClasses) {
-            Object c = claz.newInstance();
-            container.put(claz, c);
-        }
 
+                Object c = claz.newInstance();
+                container.put(claz, c);
+        }
 
         for(Field field: fields){
 
@@ -39,6 +40,18 @@ public class MyInjector {
 
         for(Map.Entry<Class,Object> map: container.entrySet()){
             System.out.println(map.getValue());
+        }
+        MyInjector my  = new MyInjector();
+
+        my.getBean(new AClass());
+    }
+
+    public Object getBean(AClass clazz) throws BeanNotFoundException {
+
+        if(container.containsKey(clazz)){
+            return container.get(clazz);
+        }else {
+            throw new BeanNotFoundException("The class is not in our container");
         }
     }
 }
